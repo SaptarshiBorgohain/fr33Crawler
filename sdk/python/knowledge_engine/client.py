@@ -46,8 +46,16 @@ class KnowledgeEngineClient:
         req = urllib.request.Request(url, data=data, headers=headers or {})
         req.method = method
 
-        with urllib.request.urlopen(req) as response:
-            return json.loads(response.read().decode())
+        try:
+            with urllib.request.urlopen(req) as response:
+                return json.loads(response.read().decode())
+        except urllib.error.URLError as e:
+            if hasattr(e, "reason") and isinstance(e.reason, ConnectionRefusedError):
+                print(f"\n❌ ERROR: Could not connect to Knowledge Engine at {self.api_url}")
+                print("   Is the backend running?")
+                print("   👉 Try running: 'docker-compose up -d' (No Go required)")
+                print("   👉 Or if developing: 'go run cmd/server/main.go'\n")
+            raise e
 
     def check_status(self) -> Optional[Dict[str, Any]]:
         try:
