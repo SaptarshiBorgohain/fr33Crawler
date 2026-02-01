@@ -1,0 +1,103 @@
+openapi: 3.0.0
+info:
+  title: Knowledge Engine API
+  description: Universal Knowledge Retrieval Service for AI Agents. This API allows any agent to crawl the web, build a semantic index, and retrieve context for RAG pipelines.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local Development Server
+
+paths:
+  /crawl:
+    post:
+      summary: Index a new webpage
+      description: Triggers a crawl for a specific URL. The engine will fetch, parse, and add the content to the vector index.
+      operationId: startCrawl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  example: "https://go.dev/doc/"
+              required:
+                - url
+      responses:
+        '202':
+          description: Crawl accepted and started in background
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "crawl_started"
+                  seed:
+                    type: string
+        '400':
+          description: Invalid URL
+        '500':
+          description: Internal Engine Error
+
+  /search:
+    get:
+      summary: Retrieve context
+      description: Performs a semantic vector search to find relevant document snippets for a given query string. Ideal for RAG context injection.
+      operationId: searchKnowledge
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: true
+          description: The search query or user question
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    type: string
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                        score:
+                          type: number
+                          format: float
+                        snippet:
+                          type: string
+                          description: Relevant text chunk for LLM context
+        '400':
+          description: Missing query parameter
+
+  /status:
+    get:
+      summary: Service Health
+      description: returns the current operational status of the engine.
+      operationId: getStatus
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running:
+                    type: boolean
+                  pages_crawled:
+                    type: integer
+                  uptime:
+                    type: string

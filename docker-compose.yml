@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  knowledge-engine:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: knowledge-engine
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data  # Persist crawled knowledge
+    environment:
+      - FRONTIER_MAX_CONCURRENCY=5
+      - POLITENESS_DEFAULT_MIN_DELAY=1s
+      # Hook in your local Ollama (if using /generate endpoint)
+      # For Docker "localhost" refers to the container, use "host.docker.internal" to access host services
+      - LLM_PROVIDER=ollama
+      - LLM_BASE_URL=http://host.docker.internal:11434/api/generate
+    restart: unless-stopped

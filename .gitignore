@@ -1,0 +1,29 @@
+.DS_Store
+.vscode/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.env
+.env.*
+
+# Go
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage.out
+
+# Build artifacts
+/dist/
+/build/
+
+# Logs
+*.log

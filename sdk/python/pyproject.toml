@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "knowledge-engine"
+version = "0.1.0"
+description = "Python SDK for the Knowledge Engine backend"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "Knowledge Engine"}]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+knowledge-engine = "knowledge_engine.client:run_cli"
+
+[tool.setuptools]
+packages = ["knowledge_engine"]
